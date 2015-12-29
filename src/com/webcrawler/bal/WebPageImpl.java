@@ -5,9 +5,9 @@
  */
 package com.webcrawler.bal;
 
+import java.io.IOException;
 import java.util.Set;
 import java.util.HashSet;
-import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -15,9 +15,11 @@ import org.jsoup.select.Elements;
  *
  * @author AshishPanigrahi
  */
-public class WebPageImpl implements WebPageDAO{
+public class WebPageImpl implements WebPageDAO {
+
     private static final String ROOT_QUERY_URL
             = "https://www.google.com.au/search?q=";
+
     /**
      *
      * @param queryString
@@ -25,14 +27,14 @@ public class WebPageImpl implements WebPageDAO{
     public void setWebPagesFromQueryString(String queryString) {
         try {
 
-            Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL,queryString
+            Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL, queryString
                     + "&num=50&cr=AU");
             for (WebPage webPage : webPageList) {
                 webPage.setPages(webPage.getDomain().getDomainUrl());
             }
-        } catch (IllegalArgumentException exc) {
+        } catch (IOException exc) {
             exc.printStackTrace();
-        } catch (HttpStatusException exc) {
+        } catch (IllegalArgumentException exc) {
             exc.printStackTrace();
         } catch (Exception exc) {
             exc.printStackTrace();
@@ -56,7 +58,6 @@ public class WebPageImpl implements WebPageDAO{
         Set<WebPage> webPageList = (Set<WebPage>) new HashSet();
 
         try {
-            webPage.getDocument();
             if (webPage.getDocument() != null) {
                 // get the list of domain names
                 Elements links = webPage.getDocument().select("a[href]");
@@ -71,7 +72,7 @@ public class WebPageImpl implements WebPageDAO{
                 }
             }
         } catch (Exception exc) {
-            System.out.println(exc.getMessage());
+            exc.printStackTrace();
         }
         return webPageList;
     }
