@@ -86,7 +86,6 @@ public class WebPage {
                         || docStr.contains("special")
                         || docStr.contains("offer")) {
                     try {
-                        System.out.println(Url);
                         //store the Url to database to avoid parsing again
                         sql = "INSERT INTO  `Crawler`.`Record` " + " VALUES " + "(?,?);";
                         PreparedStatement stmt
@@ -102,7 +101,6 @@ public class WebPage {
                     }
                 }
             }
-
         } catch (IllegalArgumentException | IOException exc) {
             System.out.println(exc.getMessage());
         } catch (SQLException exc) {
