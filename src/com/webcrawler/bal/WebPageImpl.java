@@ -19,7 +19,6 @@ import org.jsoup.select.Elements;
 public class WebPageImpl {
     private static final String ROOT_QUERY_URL
             = "https://www.google.com.au/search?q=";
-
     /**
      *
      * @param queryString

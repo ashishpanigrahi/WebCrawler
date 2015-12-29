@@ -52,7 +52,6 @@ public class WebPage {
         return document;
     }
 
-    
         /**
      * setPages
      *
@@ -90,6 +89,7 @@ public class WebPage {
                         stmt.execute();
                         //setPages(link.attr("abs:href"));
                     } catch (SQLException exc) {
+                        exc.printStackTrace();
                     } catch (Exception exc) {
                         exc.printStackTrace();
                     }
