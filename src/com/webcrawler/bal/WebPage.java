@@ -21,7 +21,7 @@ import org.jsoup.nodes.Document;
  */
 public class WebPage {
     
-    private final Anchor anchor;
+    private Domain domain;
     private String webPageHash;
     private int anchorParseStatus;
     private int emailParseStatus;
@@ -31,16 +31,16 @@ public class WebPage {
     private static final DB DB_OBJ = new DB();
     
     
-    public WebPage(Anchor anchor) throws Exception{
-        this.anchor             =   anchor;
-        this.webPageHash        =   Hasher.toSha256(anchor.getAnchorHash());
+    public WebPage(Domain domain) throws Exception{
+        this.domain             =   domain;
+        this.webPageHash        =   Hasher.toSha256(domain.getDomainHash());
         this.anchorParseStatus  =   0;
         this.emailParseStatus   =   0;
     }
     public void LoadDocumentFomWeb()
     {
         try {
-            document    =   Jsoup.connect(anchor.getAnchorUrl()).userAgent(
+            document    =   Jsoup.connect(domain.getDomainUrl()).userAgent(
 			  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
 			.timeout(10000).get();
         } catch (IOException ex) {

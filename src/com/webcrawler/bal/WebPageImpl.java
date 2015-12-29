@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
  *
  * @author AshishPanigrahi
  */
-public class WebPageImpl {
+public class WebPageImpl implements WebPageDAO{
     private static final String ROOT_QUERY_URL
             = "https://www.google.com.au/search?q=";
     /**
@@ -53,9 +53,7 @@ public class WebPageImpl {
             throws Exception {
         String requestUrl = url + queryString;
         Domain domain = new Domain(requestUrl);
-        Anchor anchor = new Anchor(domain, requestUrl);
-
-        WebPage webPage = new WebPage(anchor);
+        WebPage webPage = new WebPage(domain);
         webPage.LoadDocumentFomWeb();
 
         Set<Domain> result = (Set<Domain>) new HashSet();
@@ -79,5 +77,30 @@ public class WebPageImpl {
             System.out.println(exc.getMessage());
         }
         return result;
+    }
+
+    @Override
+    public boolean insertWebPage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean deleteWebPage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean updateWebPage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public WebPage getWebpage() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Set<WebPage> getAllWebPages() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
