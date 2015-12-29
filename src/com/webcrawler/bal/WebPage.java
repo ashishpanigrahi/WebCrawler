@@ -23,8 +23,6 @@ public class WebPage {
     
     private Domain domain;
     private String webPageHash;
-    private int anchorParseStatus;
-    private int emailParseStatus;
     private Document document;
     
     private static int rowIndex;
@@ -34,14 +32,14 @@ public class WebPage {
     public WebPage(Domain domain) throws Exception{
         this.domain             =   domain;
         this.webPageHash        =   Hasher.toSha256(domain.getDomainHash());
-        this.anchorParseStatus  =   0;
-        this.emailParseStatus   =   0;
     }
     public void LoadDocumentFomWeb()
     {
         try {
             document    =   Jsoup.connect(domain.getDomainUrl()).userAgent(
-			  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
+			  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                                  + "AppleWebKit/537.36 (KHTML, like Gecko) "
+                                  + "Chrome/42.0.2311.135 Safari/537.36 Edge/12.246")
 			.timeout(10000).get();
         } catch (IOException ex) {
             Logger.getLogger(WebPage.class.getName()).log(Level.SEVERE, null, ex);
