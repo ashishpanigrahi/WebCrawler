@@ -8,7 +8,6 @@ package com.webcrawler.bal;
 import java.util.Set;
 import java.util.HashSet;
 import org.jsoup.HttpStatusException;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -26,7 +25,7 @@ public class WebPageImpl implements WebPageDAO{
     public void setWebPagesFromQueryString(String queryString) {
         try {
 
-            Set<WebPage> webPageList = (Set<WebPage>) this.getDomainsFromGoogle(ROOT_QUERY_URL,queryString
+            Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL,queryString
                     + "&num=50&cr=AU");
             for (WebPage webPage : webPageList) {
                 WebPage.setPages(webPage.getDomain().getDomainUrl());
@@ -47,7 +46,7 @@ public class WebPageImpl implements WebPageDAO{
      * @return
      * @throws Exception
      */
-    public Set<WebPage> getDomainsFromGoogle(String url, String queryString)
+    public Set<WebPage> getUrlsFromGoogleSearch(String url, String queryString)
             throws Exception {
         String requestUrl = url + queryString;
         Domain domain = new Domain(requestUrl);
