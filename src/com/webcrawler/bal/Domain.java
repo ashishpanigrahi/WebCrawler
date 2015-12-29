@@ -18,9 +18,9 @@ public class Domain {
 
     private String domainHash;
     private String domainUrl;
-    private boolean activated;
-    private Timestamp modified;
     private Timestamp created;
+    private Timestamp modified;
+    
 
     public String getDomainHash() {
         return domainHash;
@@ -28,10 +28,6 @@ public class Domain {
 
     public String getDomainUrl() {
         return domainUrl;
-    }
-
-    public boolean isActivated() {
-        return activated;
     }
 
     public Timestamp getModified() {
@@ -47,13 +43,11 @@ public class Domain {
         this.domainUrl = domainUrl;
         this.created = CommonBal.getTimeStamp();
         this.modified = CommonBal.getTimeStamp();
-        this.activated = true;
     }
 
     public Domain(String domainHash, String domainUrl, boolean activated, Timestamp modified, Timestamp created) {
         this.domainHash = domainHash;
         this.domainUrl = domainUrl;
-        this.activated = activated;
         this.modified = modified;
         this.created = created;
     }
