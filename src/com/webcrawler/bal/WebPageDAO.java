@@ -15,6 +15,6 @@ interface WebPageDAO {
     public boolean insertWebPage();
     public boolean deleteWebPage();
     public boolean updateWebPage();
-    public WebPage getWebpage();
+    public WebPage getWebPage();
     public Set<WebPage> getAllWebPages();
 }

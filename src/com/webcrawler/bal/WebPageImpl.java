@@ -93,7 +93,7 @@ public class WebPageImpl implements WebPageDAO{
     }
 
     @Override
-    public WebPage getWebpage() {
+    public WebPage getWebPage() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
