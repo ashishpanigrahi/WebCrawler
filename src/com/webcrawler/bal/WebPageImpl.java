@@ -28,7 +28,7 @@ public class WebPageImpl implements WebPageDAO{
             Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL,queryString
                     + "&num=50&cr=AU");
             for (WebPage webPage : webPageList) {
-                WebPage.setPages(webPage.getDomain().getDomainUrl());
+                webPage.setPages(webPage.getDomain().getDomainUrl());
             }
         } catch (IllegalArgumentException exc) {
             exc.printStackTrace();
@@ -53,7 +53,7 @@ public class WebPageImpl implements WebPageDAO{
         WebPage webPage = new WebPage(domain);
         webPage.LoadDocumentFomWeb();
 
-        Set<WebPage> result = (Set<WebPage>) new HashSet();
+        Set<WebPage> webPageList = (Set<WebPage>) new HashSet();
 
         try {
             webPage.getDocument();
@@ -66,14 +66,14 @@ public class WebPageImpl implements WebPageDAO{
                             && (!temp.contains("google"))
                             && (temp.contains(".com")
                             || temp.contains(".au"))) {
-                        result.add(new WebPage(new Domain(Domain.getDomainName(temp))));
+                        webPageList.add(new WebPage(new Domain(Domain.getDomainName(temp))));
                     }
                 }
             }
         } catch (Exception exc) {
             System.out.println(exc.getMessage());
         }
-        return result;
+        return webPageList;
     }
 
     @Override

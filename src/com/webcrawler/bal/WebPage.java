@@ -26,7 +26,7 @@ public class WebPage {
     private Document document;
     
     private static int rowIndex = 1;
-    private static final DB DB_OBJ = new DB();
+    private static final DB DATABASE_OBJECT = new DB();
     
     
     public WebPage(Domain domain) throws Exception{
@@ -66,18 +66,17 @@ public class WebPage {
      * @param Url
      * @throws SQLException
      * @throws IOException
-     */
-    public static void setPages(String Url) throws SQLException, IOException {
+     */ 
+    public void setPages(String Url) throws SQLException, IOException {
         //db.runSql2("TRUNCATE Record;");
         try {
             //check if the given Url is already in database
             String sql = "select URL from Record where URL = '" + Url + "'";
-            ResultSet resultSet = DB_OBJ.runSql(sql);
+            ResultSet resultSet = DATABASE_OBJECT.runSql(sql);
 
             if (!resultSet.next()) {
                 //get useful information
-                Document doc = Jsoup.connect(Url).get();
-                String docStr = doc.text().toLowerCase();
+                String docStr = this.getDocument().text().toLowerCase();
                 //get all links and recursively call the setPages method
                 if (docStr.contains("sale")
                         || docStr.contains("deal")
@@ -89,7 +88,7 @@ public class WebPage {
                         //store the Url to database to avoid parsing again
                         sql = "INSERT INTO  `Crawler`.`Record` " + " VALUES " + "(?,?);";
                         PreparedStatement stmt
-                                = DB_OBJ.conn.prepareStatement(sql,
+                                = DATABASE_OBJECT.conn.prepareStatement(sql,
                                         Statement.RETURN_GENERATED_KEYS);
                         stmt.setString(1, String.valueOf(rowIndex++));
                         stmt.setString(2, Url);
@@ -101,9 +100,9 @@ public class WebPage {
                     }
                 }
             }
-        } catch (IllegalArgumentException | IOException exc) {
-            System.out.println(exc.getMessage());
-        } catch (SQLException exc) {
+        } 
+        catch (SQLException exc) {
+            exc.printStackTrace();
         }
     }
     
