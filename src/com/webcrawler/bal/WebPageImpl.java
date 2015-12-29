@@ -26,12 +26,10 @@ public class WebPageImpl implements WebPageDAO{
     public void setWebPagesFromQueryString(String queryString) {
         try {
 
-            Set<Domain> domainList = (Set<Domain>) this.getDomainsFromGoogle(queryString
-                    + "&num=50&cr=AU", ROOT_QUERY_URL);
-            Domain.showDomainNames(domainList);
-            System.out.println("\n\nTraversing through the domains to get links\n");
-            for (Domain domain : domainList) {
-                WebPage.setPages(domain.getDomainUrl());
+            Set<WebPage> webPageList = (Set<WebPage>) this.getDomainsFromGoogle(ROOT_QUERY_URL,queryString
+                    + "&num=50&cr=AU");
+            for (WebPage webPage : webPageList) {
+                WebPage.setPages(webPage.getDomain().getDomainUrl());
             }
         } catch (IllegalArgumentException exc) {
             exc.printStackTrace();
@@ -49,27 +47,27 @@ public class WebPageImpl implements WebPageDAO{
      * @return
      * @throws Exception
      */
-    public Set<Domain> getDomainsFromGoogle(String queryString, String url)
+    public Set<WebPage> getDomainsFromGoogle(String url, String queryString)
             throws Exception {
         String requestUrl = url + queryString;
         Domain domain = new Domain(requestUrl);
         WebPage webPage = new WebPage(domain);
         webPage.LoadDocumentFomWeb();
 
-        Set<Domain> result = (Set<Domain>) new HashSet();
+        Set<WebPage> result = (Set<WebPage>) new HashSet();
 
         try {
-            Document doc = webPage.getDocument();
-            if (doc != null) {
+            webPage.getDocument();
+            if (webPage.getDocument() != null) {
                 // get the list of domain names
-                Elements links = doc.select("a[href]");
+                Elements links = webPage.getDocument().select("a[href]");
                 for (Element link : links) {
                     String temp = link.attr("href");
                     if (temp.startsWith("/url?q=http://")
                             && (!temp.contains("google"))
                             && (temp.contains(".com")
                             || temp.contains(".au"))) {
-                        result.add(new Domain(Domain.getDomainName(temp)));
+                        result.add(new WebPage(new Domain(Domain.getDomainName(temp))));
                     }
                 }
             }

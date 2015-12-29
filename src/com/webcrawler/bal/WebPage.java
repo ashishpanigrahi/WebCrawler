@@ -25,7 +25,7 @@ public class WebPage {
     private String webPageHash;
     private Document document;
     
-    private static int rowIndex;
+    private static int rowIndex = 1;
     private static final DB DB_OBJ = new DB();
     
     
@@ -37,9 +37,7 @@ public class WebPage {
     {
         try {
             document    =   Jsoup.connect(domain.getDomainUrl()).userAgent(
-			  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                                  + "AppleWebKit/537.36 (KHTML, like Gecko) "
-                                  + "Chrome/42.0.2311.135 Safari/537.36 Edge/12.246")
+			  "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)")
 			.timeout(10000).get();
         } catch (IOException ex) {
             Logger.getLogger(WebPage.class.getName()).log(Level.SEVERE, null, ex);
@@ -48,6 +46,18 @@ public class WebPage {
 
     public Document getDocument() {
         return document;
+    }
+
+    public Domain getDomain() {
+        return domain;
+    }
+
+    public String getWebPageHash() {
+        return webPageHash;
+    }
+
+    public static int getRowIndex() {
+        return rowIndex;
     }
 
         /**
@@ -85,7 +95,6 @@ public class WebPage {
                         stmt.setString(1, String.valueOf(rowIndex++));
                         stmt.setString(2, Url);
                         stmt.execute();
-                        //setPages(link.attr("abs:href"));
                     } catch (SQLException exc) {
                         exc.printStackTrace();
                     } catch (Exception exc) {
