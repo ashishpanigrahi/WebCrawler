@@ -6,10 +6,16 @@
 package com.webcrawler.bal;
 
 import java.io.IOException;
+import java.net.URL;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Set;
 import java.util.HashSet;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import sun.misc.IOUtils;
 
 /**
  *
@@ -17,6 +23,7 @@ import org.jsoup.select.Elements;
  */
 public class WebPageImpl implements WebPageDAO {
 
+    private static final DB DATABASE_OBJECT = new DB();
     private static final String ROOT_QUERY_URL
             = "https://www.google.com.au/search?q=";
 
@@ -30,7 +37,7 @@ public class WebPageImpl implements WebPageDAO {
             Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL, queryString
                     + "&num=50&cr=AU");
             for (WebPage webPage : webPageList) {
-                webPage.setPages(webPage.getDomain().getDomainUrl());
+                setPages(webPage,webPage.getDomain().getDomainUrl());
             }
         } catch (IOException exc) {
             exc.printStackTrace();
@@ -48,7 +55,7 @@ public class WebPageImpl implements WebPageDAO {
      * @return
      * @throws Exception
      */
-    public Set<WebPage> getUrlsFromGoogleSearch(String url, String queryString)
+    private Set<WebPage> getUrlsFromGoogleSearch(String url, String queryString)
             throws Exception {
         String requestUrl = url + queryString;
         Domain domain = new Domain(requestUrl);
@@ -77,9 +84,56 @@ public class WebPageImpl implements WebPageDAO {
         return webPageList;
     }
 
+    /**
+     * setPages
+     *
+     * @param Url
+     * @throws SQLException
+     * @throws IOException
+     */
+    private void setPages(WebPage webPage,String Url) throws SQLException, IOException {
+        //db.runSql2("TRUNCATE Record;");
+        try {
+            //check if the given Url is already in database
+            String sql = "select * from WebPages where Url = '" + Url + "'";
+            ResultSet resultSet = DATABASE_OBJECT.runSql(sql);
+            webPage.LoadDocumentFomWeb();
+            if ((!resultSet.next())) {
+                //get useful information
+                String docStr = webPage.getDocument().text().toLowerCase();
+                //get all links and recursively call the setPages method
+                if (docStr.contains("sale")
+                        || docStr.contains("deal")
+                        || docStr.contains("clearance")
+                        || docStr.contains("outlet")
+                        || docStr.contains("special")
+                        || docStr.contains("offer")) {
+                insertWebPage(webPage);    
+                }
+            }
+        } catch (NullPointerException | SQLException exc) {
+            exc.printStackTrace();
+        }
+    }
     @Override
-    public boolean insertWebPage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean insertWebPage(WebPage webPage) {
+        try {
+                        //store the Url to database to avoid parsing again
+                        String sql = "INSERT INTO  `Crawler`.`WebPages` " + " VALUES " + "(?,?,?,?);";
+                        PreparedStatement stmt
+                                = DATABASE_OBJECT.conn.prepareStatement(sql,
+                                        Statement.RETURN_GENERATED_KEYS);
+                        stmt.setString(1, webPage.getWebPageHash());
+                        stmt.setString(2, webPage.getDomain().getDomainHash());
+                        stmt.setString(3, webPage.getDomain().getDomainUrl());
+                        stmt.setString(4, webPage.getDomain().getCreated().toString());
+                        stmt.execute();
+                    } catch (SQLException exc) {
+                        exc.printStackTrace();
+                    } catch (Exception exc) {
+                        exc.printStackTrace();
+                    }
+        return true;
     }
 
     @Override
