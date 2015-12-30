@@ -6,7 +6,6 @@
 package com.webcrawler.bal;
 
 import java.io.IOException;
-import java.net.URL;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,7 +14,6 @@ import java.util.Set;
 import java.util.HashSet;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import sun.misc.IOUtils;
 
 /**
  *
@@ -95,7 +93,7 @@ public class WebPageImpl implements WebPageDAO {
         //db.runSql2("TRUNCATE Record;");
         try {
             //check if the given Url is already in database
-            String sql = "select * from WEBPAGE where URL = '" + Url + "'";
+            String sql = "select URL from WEBPAGE where URL = '" + Url + "'";
             ResultSet resultSet = DATABASE_OBJECT.runSql(sql);
             webPage.LoadDocumentFomWeb();
             if ((!resultSet.next())) {
@@ -119,14 +117,16 @@ public class WebPageImpl implements WebPageDAO {
     public boolean insertWebPage(WebPage webPage) {
         try {
                         //store the Url to database to avoid parsing again
-                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?);";
+                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?,?);";
                         PreparedStatement stmt
                                 = DATABASE_OBJECT.conn.prepareStatement(sql,
                                         Statement.RETURN_GENERATED_KEYS);
-                        stmt.setString(3, webPage.getWebPageHash());
-                        stmt.setString(2, webPage.getDomain().getDomainHash());
+                
                         stmt.setString(1, webPage.getDomain().getDomainUrl());
+                        stmt.setString(2, webPage.getDomain().getDomainHash());
+                        stmt.setString(3, webPage.getWebPageHash());
                         stmt.setString(4, webPage.getDomain().getCreated().toString());
+                        stmt.setString(5, webPage.getDocument().html());
                         stmt.execute();
                     } catch (SQLException exc) {
                         exc.printStackTrace();
