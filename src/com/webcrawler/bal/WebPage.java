@@ -6,10 +6,6 @@
 package com.webcrawler.bal;
 
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,7 +34,7 @@ public class WebPage {
                     "Mozilla/5.0 (compatible; Googlebot/2.1; "
                             + "+http://www.google.com/bot.html)").timeout(5000).get();
         } catch (HttpStatusException exc) {
-            exc.printStackTrace();
+            System.out.println(exc.getMessage());
         } 
     }
 

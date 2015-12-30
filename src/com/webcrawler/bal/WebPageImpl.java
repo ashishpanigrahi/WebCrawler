@@ -95,7 +95,7 @@ public class WebPageImpl implements WebPageDAO {
         //db.runSql2("TRUNCATE Record;");
         try {
             //check if the given Url is already in database
-            String sql = "select * from WebPages where Url = '" + Url + "'";
+            String sql = "select * from WEBPAGE where URL = '" + Url + "'";
             ResultSet resultSet = DATABASE_OBJECT.runSql(sql);
             webPage.LoadDocumentFomWeb();
             if ((!resultSet.next())) {
@@ -112,20 +112,20 @@ public class WebPageImpl implements WebPageDAO {
                 }
             }
         } catch (NullPointerException | SQLException exc) {
-            exc.printStackTrace();
+            System.out.println(exc.getMessage());
         }
     }
     @Override
     public boolean insertWebPage(WebPage webPage) {
         try {
                         //store the Url to database to avoid parsing again
-                        String sql = "INSERT INTO  `Crawler`.`WebPages` " + " VALUES " + "(?,?,?,?);";
+                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?);";
                         PreparedStatement stmt
                                 = DATABASE_OBJECT.conn.prepareStatement(sql,
                                         Statement.RETURN_GENERATED_KEYS);
-                        stmt.setString(1, webPage.getWebPageHash());
+                        stmt.setString(3, webPage.getWebPageHash());
                         stmt.setString(2, webPage.getDomain().getDomainHash());
-                        stmt.setString(3, webPage.getDomain().getDomainUrl());
+                        stmt.setString(1, webPage.getDomain().getDomainUrl());
                         stmt.setString(4, webPage.getDomain().getCreated().toString());
                         stmt.execute();
                     } catch (SQLException exc) {
