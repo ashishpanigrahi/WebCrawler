@@ -117,7 +117,7 @@ public class WebPageImpl implements WebPageDAO {
     public boolean insertWebPage(WebPage webPage) {
         try {
                         //store the Url to database to avoid parsing again
-                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?,?);";
+                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?);";
                         PreparedStatement stmt
                                 = DATABASE_OBJECT.conn.prepareStatement(sql,
                                         Statement.RETURN_GENERATED_KEYS);
@@ -126,7 +126,7 @@ public class WebPageImpl implements WebPageDAO {
                         stmt.setString(2, webPage.getDomain().getDomainHash());
                         stmt.setString(3, webPage.getWebPageHash());
                         stmt.setString(4, webPage.getDomain().getCreated().toString());
-                        stmt.setString(5, webPage.getDocument().html());
+                        //stmt.setString(5, webPage.getDocument().text());
                         stmt.execute();
                     } catch (SQLException exc) {
                         exc.printStackTrace();
