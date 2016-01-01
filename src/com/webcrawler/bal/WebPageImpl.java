@@ -12,8 +12,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 
 /**
  *
@@ -28,14 +31,16 @@ public class WebPageImpl implements WebPageDAO {
     /**
      *
      * @param queryString
+     * @return 
      */
-    public void setWebPagesFromQueryString(String queryString) {
+    public Set<WebPage> setWebPagesFromQueryString(String queryString) {
+        Set<WebPage> webPageList = null;
         try {
-
-            Set<WebPage> webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL, queryString
+            webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL, queryString
                     + "&num=50&cr=AU");
             for (WebPage webPage : webPageList) {
-                setPages(webPage,webPage.getDomain().getDomainUrl());
+                setPages(webPage, webPage.getDomain().getDomainUrl());
+
             }
         } catch (IOException exc) {
             exc.printStackTrace();
@@ -44,6 +49,7 @@ public class WebPageImpl implements WebPageDAO {
         } catch (Exception exc) {
             exc.printStackTrace();
         }
+        return webPageList;
     }
 
     /**
@@ -89,7 +95,7 @@ public class WebPageImpl implements WebPageDAO {
      * @throws SQLException
      * @throws IOException
      */
-    private void setPages(WebPage webPage,String Url) throws SQLException, IOException {
+    private void setPages(WebPage webPage, String Url) throws SQLException, IOException {
         //db.runSql2("TRUNCATE Record;");
         try {
             //check if the given Url is already in database
@@ -106,44 +112,54 @@ public class WebPageImpl implements WebPageDAO {
                         || docStr.contains("outlet")
                         || docStr.contains("special")
                         || docStr.contains("offer")) {
-                insertWebPage(webPage);    
+                    insertWebPage(webPage);
                 }
             }
         } catch (NullPointerException | SQLException exc) {
             System.out.println(exc.getMessage());
         }
     }
+
     @Override
-    public boolean insertWebPage(WebPage webPage) {
+    public void insertWebPage(WebPage webPage) {
         try {
-                        //store the Url to database to avoid parsing again
-                        String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?);";
-                        PreparedStatement stmt
-                                = DATABASE_OBJECT.conn.prepareStatement(sql,
-                                        Statement.RETURN_GENERATED_KEYS);
-                
-                        stmt.setString(1, webPage.getDomain().getDomainUrl());
-                        stmt.setString(2, webPage.getDomain().getDomainHash());
-                        stmt.setString(3, webPage.getWebPageHash());
-                        stmt.setString(4, webPage.getDomain().getCreated().toString());
-                        //stmt.setString(5, webPage.getDocument().text());
-                        stmt.execute();
-                    } catch (SQLException exc) {
-                        exc.printStackTrace();
-                    } catch (Exception exc) {
-                        exc.printStackTrace();
-                    }
-        return true;
+            //store the Url to database to avoid parsing again
+            String sql = "INSERT INTO  `Crawler`.`WEBPAGE` " + " VALUES " + "(?,?,?,?,?);";
+            PreparedStatement stmt
+                    = DATABASE_OBJECT.conn.prepareStatement(sql,
+                            Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(1, webPage.getWebPageHash());
+            stmt.setString(2, webPage.getDomain().getDomainUrl());
+            stmt.setString(3, webPage.getDomain().getDomainHash());
+            stmt.setString(4, webPage.getDomain().getCreated().toString());
+            stmt.setString(5, webPage.getDocument().html());
+            stmt.execute();
+
+        } catch (SQLException exc) {
+            exc.printStackTrace();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
     }
 
     @Override
-    public boolean deleteWebPage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteWebPage(WebPage webPage) {
+        try {
+            String sql = "Delete from Crawler.WEBPAGE where WEBPAGEHASH = " + webPage.getWebPageHash() + "AND URL = " + webPage.getDomain().getDomainUrl();
+            PreparedStatement stmt
+                    = DATABASE_OBJECT.conn.prepareStatement(sql,
+                            Statement.RETURN_GENERATED_KEYS);
+            stmt.execute();
+        } catch (SQLException exc) {
+            exc.printStackTrace();
+        } catch (Exception exc) {
+            exc.printStackTrace();
+        }
     }
 
     @Override
-    public boolean updateWebPage() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateWebPage(WebPage webPage) {
     }
 
     @Override
@@ -155,4 +171,17 @@ public class WebPageImpl implements WebPageDAO {
     public Set<WebPage> getAllWebPages() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    public void getAllImagesFromUrl(Set<WebPage> webPageList) {
+        for(WebPage webPage: webPageList){
+            try {
+                webPage.LoadDocumentFomWeb();
+                Elements elements = webPage.getDocument().getElementsContainingText("img");
+                System.out.println(elements.html());
+                
+            } catch (IOException ex) {
+                Logger.getLogger(WebPageImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+  }
 }

@@ -12,9 +12,9 @@ import java.util.Set;
  * @author AshishPanigrahi
  */
 interface WebPageDAO {
-    public boolean insertWebPage(WebPage webPage);
-    public boolean deleteWebPage();
-    public boolean updateWebPage();
+    public void insertWebPage(WebPage webPage);
+    public void deleteWebPage(WebPage webPage);
+    public void updateWebPage(WebPage webPage);
     public WebPage getWebPage();
     public Set<WebPage> getAllWebPages();
 }

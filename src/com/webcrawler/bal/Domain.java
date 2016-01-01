@@ -19,7 +19,7 @@ public class Domain {
     private String domainHash;
     private String domainUrl;
     private Timestamp created;
-    private Timestamp modified;
+
     
 
     public String getDomainHash() {
@@ -30,9 +30,6 @@ public class Domain {
         return domainUrl;
     }
 
-    public Timestamp getModified() {
-        return modified;
-    }
 
     public Timestamp getCreated() {
         return created;
@@ -42,13 +39,11 @@ public class Domain {
         this.domainHash = Hasher.toSha256(domainUrl);
         this.domainUrl = domainUrl;
         this.created = CommonBal.getTimeStamp();
-        this.modified = CommonBal.getTimeStamp();
     }
 
-    public Domain(String domainHash, String domainUrl, boolean activated, Timestamp modified, Timestamp created) {
+    public Domain(String domainHash, String domainUrl, boolean activated, Timestamp created) {
         this.domainHash = domainHash;
         this.domainUrl = domainUrl;
-        this.modified = modified;
         this.created = created;
     }
 
