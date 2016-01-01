@@ -179,13 +179,14 @@ public class WebPageImpl implements WebPageDAO {
                 Elements elements = webPage.getDocument().select("img");
                 for (Element el : elements) {
                     imageUrl = el.attr("src");
-                    System.out.println("DOMAIN: "+webPage.getDomain()+ "Image URL: "+imageUrl);
+                    if (imageUrl.trim() != null) {
+                        System.out.println("DOMAIN: " + webPage.getDomain().getDomainUrl() + "Image URL: " + imageUrl);
+                    }
                 }
-                
 
-                }catch (IOException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(WebPageImpl.class.getName()).log(Level.SEVERE, null, ex);
-            }
             }
         }
     }
+}
