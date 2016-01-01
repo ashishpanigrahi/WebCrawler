@@ -14,6 +14,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -171,22 +173,33 @@ public class WebPageImpl implements WebPageDAO {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    public static String setSourceToJLabelText(Class relativeClass, String scr) {
+        Pattern p = Pattern.compile("src=['\"](.*?)['\"]");
+        Matcher m = p.matcher(scr);
+        while (m.find()) {
+            scr = scr.replace(m.group(), "src='" + relativeClass.getResource(m.group(1)) + "'");
+        }
+        return scr;
+    }
+
     public void getAllImagesFromUrl(Set<WebPage> webPageList) {
         for (WebPage webPage : webPageList) {
             try {
                 String imageUrl = "";
                 webPage.LoadDocumentFomWeb();
                 Elements elements = webPage.getDocument().select("img");
-                for (Element el : elements) {
-                    imageUrl = el.attr("src");
-                    if (imageUrl.trim() != null) {
+                
+                for (Element element : elements) {
+                    imageUrl = element.attr("src");
+                    if (imageUrl.toLowerCase().contains("banner")) {
+                        imageUrl = setSourceToJLabelText(this.getClass(), imageUrl);
                         System.out.println("DOMAIN: " + webPage.getDomain().getDomainUrl() + "Image URL: " + imageUrl);
                     }
                 }
-
-            } catch (IOException ex) {
-                Logger.getLogger(WebPageImpl.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException | NullPointerException exc) {
+                System.out.println(exc.getMessage());
             }
         }
     }
+
 }

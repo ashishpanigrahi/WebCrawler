@@ -6,6 +6,7 @@
 package com.webcrawler.bal;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -34,14 +35,10 @@ public class WebPage {
             this.document = Jsoup.connect(domain.getDomainUrl()).userAgent(
                     "Mozilla/5.0 (compatible; Googlebot/2.1; "
                             + "+http://www.google.com/bot.html)").timeout(5000).get();
-        }catch(UnknownHostException exc){
+        }catch(SocketTimeoutException | UnknownHostException | HttpStatusException exc){
             System.out.println(exc.getMessage());
-        } catch (HttpStatusException exc){
-            System.out.println(exc.getMessage());
-        } 
-        
+        }        
     }
-
     public Document getDocument() {
         return document;
     }
