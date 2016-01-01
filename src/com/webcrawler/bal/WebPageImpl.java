@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package com.webcrawler.bal;
+
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-
 
 /**
  *
@@ -30,7 +30,7 @@ public class WebPageImpl implements WebPageDAO {
     /**
      *
      * @param queryString
-     * @return 
+     * @return
      */
     public Set<WebPage> setWebPagesFromQueryString(String queryString) {
         Set<WebPage> webPageList = null;
@@ -172,15 +172,20 @@ public class WebPageImpl implements WebPageDAO {
     }
 
     public void getAllImagesFromUrl(Set<WebPage> webPageList) {
-        for(WebPage webPage: webPageList){
+        for (WebPage webPage : webPageList) {
             try {
+                String imageUrl = "";
                 webPage.LoadDocumentFomWeb();
-                Elements elements = webPage.getDocument().getElementsContainingText("img");
-                System.out.println(elements.html());
+                Elements elements = webPage.getDocument().select("img");
+                for (Element el : elements) {
+                    imageUrl = el.attr("src");
+                    System.out.println("DOMAIN: "+webPage.getDomain()+ "Image URL: "+imageUrl);
+                }
                 
-            } catch (IOException ex) {
+
+                }catch (IOException ex) {
                 Logger.getLogger(WebPageImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
+            }
         }
-  }
-}
+    }
