@@ -13,7 +13,7 @@ import java.util.Set;
  *
  * @author AshishPanigrahi
  */
-public class UnitTest {
+public class Main {
 
     public static void main(String args[]) {
         WebPageImpl obj = new WebPageImpl();
