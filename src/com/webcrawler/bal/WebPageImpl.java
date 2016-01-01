@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package com.webcrawler.bal;
-
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
