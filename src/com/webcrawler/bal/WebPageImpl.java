@@ -5,6 +5,7 @@
  */
 package com.webcrawler.bal;
 
+import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,10 +13,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 import java.util.HashSet;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -173,13 +170,44 @@ public class WebPageImpl implements WebPageDAO {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public static String setSourceToJLabelText(Class relativeClass, String scr) {
-        Pattern p = Pattern.compile("src=['\"](.*?)['\"]");
-        Matcher m = p.matcher(scr);
-        while (m.find()) {
-            scr = scr.replace(m.group(), "src='" + relativeClass.getResource(m.group(1)) + "'");
+    @Override
+    public void insertImageUrl(WebPage webPage, String imageUrl) {
+        try {
+            //store the Url to database to avoid parsing again
+            String sql = "INSERT INTO  `Crawler`.`PAGEIMAGE` " + " VALUES " + "(?,?);";
+            PreparedStatement stmt
+                    = DATABASE_OBJECT.conn.prepareStatement(sql,
+                            Statement.RETURN_GENERATED_KEYS);
+
+            stmt.setString(2, webPage.getWebPageHash());
+            stmt.setString(1, imageUrl);
+
+            stmt.execute();
+
+        } catch (MySQLIntegrityConstraintViolationException exc) {// ignore duplicates
+        } catch (SQLException exc) {
+            exc.printStackTrace();
+        } catch (Exception exc) {
+            exc.printStackTrace();
         }
-        return scr;
+    }
+
+    @Override
+    public String getImageUrl(String imageUrl) {
+        try {
+            //check if the given Url is already in database
+            String sql = "select URL from PAGEIMAGE where  IMAGEURL= '" + imageUrl + "'";
+            ResultSet resultSet = DATABASE_OBJECT.runSql(sql);
+
+            if (resultSet.next()) 
+                return resultSet.getString(1);
+            else 
+                return "";
+            
+        } catch (NullPointerException | SQLException exc) {
+            System.out.println(exc.getMessage());
+            return "";
+        }
     }
 
     public void getAllImagesFromUrl(Set<WebPage> webPageList) {
@@ -188,12 +216,13 @@ public class WebPageImpl implements WebPageDAO {
                 String imageUrl = "";
                 webPage.LoadDocumentFomWeb();
                 Elements elements = webPage.getDocument().select("img");
-                
+
                 for (Element element : elements) {
                     imageUrl = element.attr("src");
-                    if (imageUrl.toLowerCase().contains("banner")) {
-                        imageUrl = setSourceToJLabelText(this.getClass(), imageUrl);
-                        System.out.println("DOMAIN: " + webPage.getDomain().getDomainUrl() + "Image URL: " + imageUrl);
+                    if (imageUrl.toLowerCase().contains("sale")) {
+                        if (imageUrl.startsWith("http://")) {
+                            insertImageUrl(webPage, imageUrl);
+                        }
                     }
                 }
             } catch (IOException | NullPointerException exc) {

@@ -17,4 +17,10 @@ interface WebPageDAO {
     public void updateWebPage(WebPage webPage);
     public WebPage getWebPage();
     public Set<WebPage> getAllWebPages();
+    
+    public void insertImageUrl(WebPage webPage, String imageUrl); 
+    public String getImageUrl(String webPageHash);
+    
+    
+    
 }
