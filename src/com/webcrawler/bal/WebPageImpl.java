@@ -35,7 +35,7 @@ public class WebPageImpl implements WebPageDAO {
         Set<WebPage> webPageList = null;
         try {
             webPageList = (Set<WebPage>) this.getUrlsFromGoogleSearch(ROOT_QUERY_URL, queryString
-                    + "&num=50&cr=AU");
+                    + "&num=5&cr=AU");
             for (WebPage webPage : webPageList) {
                 setPages(webPage, webPage.getDomain().getDomainUrl());
 
@@ -184,7 +184,8 @@ public class WebPageImpl implements WebPageDAO {
 
             stmt.execute();
 
-        } catch (MySQLIntegrityConstraintViolationException exc) {// ignore duplicates
+        } catch (MySQLIntegrityConstraintViolationException exc) {
+            exc.printStackTrace();
         } catch (SQLException exc) {
             exc.printStackTrace();
         } catch (Exception exc) {
